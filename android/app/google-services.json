@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "44513614650",
+    "project_id": "mobile-reviewer",
+    "storage_bucket": "mobile-reviewer.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:44513614650:android:3be28a261d06139b624e03",
+        "android_client_info": {
+          "package_name": "com.example.mobile_reviewer"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbNppGoMywYKpahqxiuRuTlbkaDVIEIFk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

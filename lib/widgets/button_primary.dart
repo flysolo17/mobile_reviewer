@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
-
 import 'package:mobile_reviewer/styles/pallete.dart';
 
-class ButtonPrimary extends StatelessWidget {
+class OutlinedButtonPrimary extends StatelessWidget {
   final String title;
   final VoidCallback onTap;
-  const ButtonPrimary({required this.title, required this.onTap, super.key});
+  const OutlinedButtonPrimary(
+      {required this.title, required this.onTap, super.key});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      child: ElevatedButton(
+      child: OutlinedButton(
         onPressed: onTap,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: PrimaryColor,
-          elevation: 0,
+        style: OutlinedButton.styleFrom(
+          side: const BorderSide(color: PrimaryColor), // Border color
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5),
           ),
@@ -25,7 +24,9 @@ class ButtonPrimary extends StatelessWidget {
           child: Text(
             title,
             style: const TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold),
+              color: PrimaryColor, // Text color matching the border color
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ),

@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_reviewer/blocs/auth/auth_bloc.dart';
 import 'package:mobile_reviewer/blocs/user/user_bloc.dart';
+import 'package:mobile_reviewer/models/user_type.dart';
+import 'package:mobile_reviewer/styles/pallete.dart';
 import 'package:mobile_reviewer/widgets/button_1.dart';
 import 'package:mobile_reviewer/models/users.dart';
 import 'package:mobile_reviewer/repositories/auth_repository.dart';
@@ -20,12 +22,19 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _fullnameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  String selectedRole = 'STUDENT';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
-        title: const Text("Create Account"),
+        title: const Text(
+          "Create account",
+          style: TextStyle(
+              fontWeight: FontWeight.w400, fontSize: 16, color: Colors.white),
+        ),
+        backgroundColor: PrimaryColor,
       ),
       body: SingleChildScrollView(
         child: MultiBlocProvider(
@@ -45,10 +54,12 @@ class _SignUpPageState extends State<SignUpPage> {
                 ScaffoldMessenger.of(context)
                     .showSnackBar(SnackBar(content: Text(state.message)));
               }
-              if (state is UserSuccessState) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Successfully saved!")));
-                context.go('/home');
+              if (state is UserSuccessState<Users>) {
+                if (state.data.userType == UserType.TEACHER) {
+                  context.go('/home');
+                } else {
+                  context.go('/student');
+                }
               }
             },
             builder: (context, state) {
@@ -78,9 +89,10 @@ class _SignUpPageState extends State<SignUpPage> {
                             children: <Widget>[
                               TextFormField(
                                 controller: _fullnameController,
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                   labelText: 'Fullname',
-                                  border: OutlineInputBorder(),
+                                  filled: true,
+                                  fillColor: Colors.grey[200],
                                 ),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
@@ -92,9 +104,10 @@ class _SignUpPageState extends State<SignUpPage> {
                               const SizedBox(height: 20),
                               TextFormField(
                                 controller: _emailController,
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                   labelText: 'Email',
-                                  border: OutlineInputBorder(),
+                                  filled: true,
+                                  fillColor: Colors.grey[200],
                                 ),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
@@ -104,11 +117,33 @@ class _SignUpPageState extends State<SignUpPage> {
                                 },
                               ),
                               const SizedBox(height: 20),
+                              DropdownButtonFormField<String>(
+                                value: selectedRole,
+                                decoration: InputDecoration(
+                                  labelText: 'I am a',
+                                  filled: true,
+                                  fillColor: Colors.grey[200],
+                                ),
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    selectedRole = newValue!;
+                                  });
+                                },
+                                items: <String>['STUDENT', 'TEACHER']
+                                    .map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                              ),
+                              const SizedBox(height: 20),
                               TextFormField(
                                 controller: _passwordController,
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                   labelText: 'Password',
-                                  border: OutlineInputBorder(),
+                                  filled: true,
+                                  fillColor: Colors.grey[200],
                                 ),
                                 obscureText: true,
                                 validator: (value) {
@@ -149,14 +184,17 @@ class _SignUpPageState extends State<SignUpPage> {
                                                 .validate()) {
                                               String name =
                                                   _fullnameController.text;
-
                                               String email =
                                                   _emailController.text;
                                               String password =
                                                   _passwordController.text;
+                                              UserType type =
+                                                  selectedRole == 'STUDENT'
+                                                      ? UserType.STUDENT
+                                                      : UserType.TEACHER;
                                               context.read<AuthBloc>().add(
-                                                    SignUpEvent(
-                                                        name, email, password),
+                                                    SignUpEvent(name, email,
+                                                        password, type),
                                                   );
                                             }
                                           },

@@ -2,12 +2,14 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mobile_reviewer/blocs/auth/auth_bloc.dart';
+
 import 'package:mobile_reviewer/config/app_router.dart';
 import 'package:mobile_reviewer/repositories/auth_repository.dart';
+import 'package:mobile_reviewer/repositories/category_repository.dart';
+import 'package:mobile_reviewer/repositories/quiz_repository.dart';
+import 'package:mobile_reviewer/repositories/responses_repository.dart';
 import 'package:mobile_reviewer/repositories/user_repository.dart';
 import 'package:mobile_reviewer/styles/pallete.dart';
-import 'package:mobile_reviewer/views/auth/login.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,6 +30,15 @@ class MyApp extends StatelessWidget {
         ),
         RepositoryProvider(
           create: (context) => UserRepository(),
+        ),
+        RepositoryProvider(
+          create: (context) => CategoryRepository(),
+        ),
+        RepositoryProvider(
+          create: (context) => QuizRepository(),
+        ),
+        RepositoryProvider(
+          create: (context) => QuizResponseRepository(),
         ),
       ],
       child: MaterialApp.router(

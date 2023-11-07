@@ -19,10 +19,10 @@ class UserChangedEvent extends AuthEvent {}
 
 class SignUpEvent extends AuthEvent {
   final String name;
-
   final String email;
   final String password;
-  const SignUpEvent(this.name, this.email, this.password);
+  final UserType userType;
+  const SignUpEvent(this.name, this.email, this.password, this.userType);
   @override
   List<Object> get props => [name, email, password];
 }
@@ -50,4 +50,11 @@ class ChangeUserPassword extends AuthEvent {
   const ChangeUserPassword(this.user, this.newPassword);
   @override
   List<Object> get props => [user, newPassword];
+}
+
+class ForgotPassword extends AuthEvent {
+  final String email;
+  const ForgotPassword(this.email);
+  @override
+  List<Object> get props => [email];
 }

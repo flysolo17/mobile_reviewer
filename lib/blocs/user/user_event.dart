@@ -27,3 +27,34 @@ class UpdateUserInfo extends UserEvent {
   @override
   List<Object?> get props => [users];
 }
+
+class UploadUserPhoto extends UserEvent {
+  final String userID;
+  final File image;
+  const UploadUserPhoto(this.userID, this.image);
+  @override
+  List<Object?> get props => [userID, image];
+}
+
+class UpdateUserPhoto extends UserEvent {
+  final String userID;
+  final String imageURL;
+  const UpdateUserPhoto(this.userID, this.imageURL);
+  @override
+  List<Object?> get props => [userID, imageURL];
+}
+
+class GetUserByID extends UserEvent {
+  final String userID;
+  const GetUserByID(this.userID);
+  @override
+  List<Object?> get props => [userID];
+}
+
+class ChangeFullname extends UserEvent {
+  final String userID;
+  final String fullname;
+  const ChangeFullname(this.userID, this.fullname);
+  @override
+  List<Object> get props => [userID, fullname];
+}

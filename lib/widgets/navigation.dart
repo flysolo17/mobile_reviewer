@@ -1,10 +1,12 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+
+import 'package:go_router/go_router.dart';
+
 import 'package:mobile_reviewer/styles/pallete.dart';
-import 'package:mobile_reviewer/views/author/author.dart';
-import 'package:mobile_reviewer/views/books/books.dart';
-import 'package:mobile_reviewer/views/settings/settings.dart';
+import 'package:mobile_reviewer/views/teacher/category/category.dart';
+
+import 'package:mobile_reviewer/views/teacher/home/home.dart';
+import 'package:mobile_reviewer/views/profile/profile.dart';
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
@@ -15,20 +17,39 @@ class MainNavigation extends StatefulWidget {
 
 class _MainNavigationState extends State<MainNavigation> {
   int _selectedIndex = 0;
+  bool _isFabVisible = true;
+
   static const List<String> _titles = [
-    "Books",
-    "Author",
-    "Settings",
+    "Home",
+    "Category",
+    "Profile",
   ];
   static const List<Widget> _pages = <Widget>[
-    BooksPage(),
-    AuthorPage(),
-    SettingsPage(),
+    HomePage(),
+    CategoriesPage(),
+    ProfilePage(),
   ];
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  void _handleScrollNotification(ScrollNotification notification) {
+    // Check if the user is scrolling down
+    if (notification is ScrollUpdateNotification &&
+        notification.scrollDelta! > 0) {
+      // Hide the FAB when scrolling down
+      setState(() {
+        _isFabVisible = false;
+      });
+    } else if (notification is ScrollEndNotification) {
+      // Show the FAB when the scrolling stops
+      setState(() {
+        _isFabVisible = true;
+      });
+    }
   }
 
   @override
@@ -40,6 +61,23 @@ class _MainNavigationState extends State<MainNavigation> {
           style: const TextStyle(
               fontWeight: FontWeight.w400, fontSize: 16, color: Colors.white),
         ),
+        actions: _selectedIndex == 1
+            ? [
+                InkWell(
+                  onTap: () {
+                    context.push('/home/create-category');
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Icon(
+                      Icons.add, // Replace with the desired icon
+                      color: Colors.white, // Customize the icon color as needed
+                      size: 24, // Customize the icon size as needed
+                    ),
+                  ),
+                )
+              ]
+            : null,
         backgroundColor: PrimaryColor,
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -53,31 +91,51 @@ class _MainNavigationState extends State<MainNavigation> {
         items: const [
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.book,
+              Icons.home_max_outlined,
               size: 24.0,
-              semanticLabel: 'Text to Books',
+              semanticLabel: 'Text to Home',
             ),
-            label: 'Books',
+            label: 'Home',
           ),
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.person_2_outlined,
+              Icons.category,
               size: 24.0,
-              semanticLabel: 'Text to weight Author',
+              semanticLabel: 'Text to weight Category',
             ),
-            label: 'Authors',
+            label: 'Category',
           ),
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.settings,
+              Icons.person,
               size: 24.0,
-              semanticLabel: 'Text to settings',
+              semanticLabel: 'Text to Accout',
             ),
-            label: 'Settings',
+            label: 'Account',
           ),
         ],
       ),
-      body: _pages[_selectedIndex],
+      body: NotificationListener<ScrollNotification>(
+        onNotification: (scrollNotification) {
+          _handleScrollNotification(scrollNotification);
+          return false;
+        },
+        child: _pages[_selectedIndex],
+      ),
+      floatingActionButton: _selectedIndex == 0 &&
+              _isFabVisible // Show FAB only on the Home page and when it's visible
+          ? FloatingActionButton(
+              onPressed: () {
+                // Add your FAB onPressed action here
+                context.push('/home/create-quiz');
+              },
+              backgroundColor: PrimaryColor, // Customize the FAB color
+              child: const Icon(
+                Icons.add,
+                color: Colors.white,
+              ), // Customize the FAB icon
+            )
+          : null,
     );
   }
 }

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mobile_reviewer/models/user_type.dart';
 import 'package:mobile_reviewer/models/users.dart';
 import 'package:mobile_reviewer/repositories/auth_repository.dart';
 
@@ -19,6 +20,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<UserChangedEvent>(_onUserChange);
     on<LogoutEvent>(_authLoggedOutEvent);
     on<SignUpEvent>(_signUpEvent);
+    on<ForgotPassword>(_forgotPassword);
+    on<ReauthenticateUser>(_onReauthenticateUser);
+    on<ChangeUserPassword>(_onChangePassword);
   }
 
   Future<void> _signIn(SignInEvent event, Emitter<AuthState> emit) async {
@@ -42,7 +46,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       var result = await _authRepository.registerWithEmailAndPassword(
           email: event.email, password: event.password);
       Users users = Users(
-          id: result!.uid, name: event.name, photo: '', email: event.email);
+          id: result!.uid,
+          name: event.name,
+          photo: '',
+          email: event.email,
+          userType: event.userType);
       emit(AuthSuccessState<Users>(users));
     } catch (e) {
       emit(AuthErrorState(e.toString()));
@@ -70,6 +78,43 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(UnAuthenticatedState());
     } catch (e) {
       emit(AuthErrorState(e.toString()));
+    }
+  }
+
+  Future<void> _forgotPassword(
+      ForgotPassword event, Emitter<AuthState> emit) async {
+    try {
+      emit(AuthLoadingState());
+      await _authRepository.resetPassword(event.email);
+      emit(AuthSuccessState<String>("We've sent an email to ${event.email}"));
+    } catch (e) {
+      emit(AuthErrorState(e.toString()));
+    }
+  }
+
+  Future<void> _onChangePassword(
+      ChangeUserPassword event, Emitter<AuthState> emit) async {
+    try {
+      emit(AuthLoadingState());
+      await _authRepository.changePassword(event.user, event.newPassword);
+      emit(const AuthSuccessState<String>("Password changed successfully!"));
+    } catch (e) {
+      emit(AuthErrorState(e.toString()));
+      emit(AuthInitial());
+    }
+  }
+
+  Future<void> _onReauthenticateUser(
+      ReauthenticateUser event, Emitter<AuthState> emit) async {
+    try {
+      emit(AuthLoadingState());
+      User user = await _authRepository.reAuthenticateUser(
+          _authRepository.currentUser!, event.currentPassword);
+      await Future.delayed(const Duration(seconds: 1));
+      add(ChangeUserPassword(user, event.newPassword));
+    } catch (e) {
+      emit(AuthErrorState(e.toString()));
+      emit(AuthInitial());
     }
   }
 }

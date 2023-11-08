@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:mobile_reviewer/config/app_router.dart';
 import 'package:mobile_reviewer/repositories/auth_repository.dart';
-import 'package:mobile_reviewer/repositories/category_repository.dart';
+
 import 'package:mobile_reviewer/repositories/quiz_repository.dart';
 import 'package:mobile_reviewer/repositories/responses_repository.dart';
 import 'package:mobile_reviewer/repositories/user_repository.dart';
@@ -30,9 +30,6 @@ class MyApp extends StatelessWidget {
         ),
         RepositoryProvider(
           create: (context) => UserRepository(),
-        ),
-        RepositoryProvider(
-          create: (context) => CategoryRepository(),
         ),
         RepositoryProvider(
           create: (context) => QuizRepository(),

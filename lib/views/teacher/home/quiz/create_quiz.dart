@@ -7,11 +7,11 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mobile_reviewer/blocs/category/category_bloc.dart';
+
 import 'package:mobile_reviewer/blocs/quiz/quiz_bloc.dart';
-import 'package:mobile_reviewer/models/categories.dart';
+
 import 'package:mobile_reviewer/repositories/auth_repository.dart';
-import 'package:mobile_reviewer/repositories/category_repository.dart';
+
 import 'package:mobile_reviewer/repositories/quiz_repository.dart';
 import 'package:mobile_reviewer/styles/pallete.dart';
 import 'package:mobile_reviewer/widgets/button_1.dart';
@@ -27,11 +27,10 @@ class _CreateQuizPageState extends State<CreateQuizPage> {
 
   TextEditingController _titleController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
+  TextEditingController _categoryController = TextEditingController();
   String? _selectedImage;
   @override
   Widget build(BuildContext context) {
-    List<Categories> categories =
-        context.read<CategoryRepository>().getCategories();
     return Scaffold(
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
@@ -116,26 +115,13 @@ class _CreateQuizPageState extends State<CreateQuizPage> {
                       maxLines: 3,
                     ),
                     const SizedBox(height: 16.0),
-                    DropdownButtonFormField<int>(
-                      value: _selectedCategory,
+                    TextField(
+                      controller: _categoryController,
                       decoration: InputDecoration(
-                        labelText: 'Category / Topic',
+                        labelText: 'Category',
                         filled: true,
                         fillColor: Colors.grey[200],
                       ),
-                      onChanged: (newValue) {
-                        setState(() {
-                          _selectedCategory = newValue!;
-                        });
-                      },
-                      items: categories.asMap().entries.map((entry) {
-                        int index = entry.key;
-                        Categories value = entry.value;
-                        return DropdownMenuItem<int>(
-                          value: index,
-                          child: Text(value.category),
-                        );
-                      }).toList(),
                     ),
                     const SizedBox(
                       height: 20,
@@ -144,7 +130,7 @@ class _CreateQuizPageState extends State<CreateQuizPage> {
                       onTap: () {
                         String title = _titleController.text;
                         String description = _descriptionController.text;
-                        String category = categories[_selectedCategory].id;
+                        String category = _categoryController.text;
                         if (_selectedImage != null &&
                             title.isNotEmpty &&
                             description.isNotEmpty &&

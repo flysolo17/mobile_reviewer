@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_reviewer/models/Responses.dart';
 
@@ -9,12 +10,16 @@ import 'package:mobile_reviewer/views/auth/change_password.dart';
 import 'package:mobile_reviewer/views/auth/forgot_password.dart';
 import 'package:mobile_reviewer/views/auth/login.dart';
 import 'package:mobile_reviewer/views/auth/sign_up.dart';
+import 'package:mobile_reviewer/views/auth/start_page.dart';
 import 'package:mobile_reviewer/views/profile/edit_profile.dart';
+import 'package:mobile_reviewer/views/student/student.nav/developer/developer.dart';
+import 'package:mobile_reviewer/views/student/student.nav/feedback/feedback.dart';
+import 'package:mobile_reviewer/views/student/student.nav/home/modules/lessons.dart';
+import 'package:mobile_reviewer/views/student/student.nav/home/modules/pdf_viewer.dart';
 import 'package:mobile_reviewer/views/student/student.nav/home/quiz/result.dart';
 import 'package:mobile_reviewer/views/student/student.nav/home/quiz/student_view_quiz.dart';
 import 'package:mobile_reviewer/views/student/student.nav/home/quiz/take_quiz.dart';
 
-import 'package:mobile_reviewer/views/teacher/category/create_category.dart';
 import 'package:mobile_reviewer/views/teacher/home/quiz/create_question.dart';
 import 'package:mobile_reviewer/views/teacher/home/quiz/create_quiz.dart';
 import 'package:mobile_reviewer/views/teacher/home/quiz/view_quiz.dart';
@@ -22,13 +27,27 @@ import 'package:mobile_reviewer/views/student/student_main.dart';
 
 import 'package:mobile_reviewer/widgets/navigation.dart';
 
+import '../views/student/student.nav/home/quiz/quiz.dart';
+
 class AppRouter {
   late final GoRouter router = GoRouter(
     routes: [
       GoRoute(
         path: '/',
         builder: (context, state) {
+          return const StarterPage();
+        },
+      ),
+      GoRoute(
+        path: '/login',
+        builder: (context, state) {
           return const LoginPage();
+        },
+      ),
+      GoRoute(
+        path: '/signup',
+        builder: (context, state) {
+          return const SignUpPage();
         },
       ),
       GoRoute(
@@ -63,12 +82,6 @@ class AppRouter {
               },
             ),
             GoRoute(
-              path: 'create-category',
-              builder: (context, state) {
-                return const CreateCategoryPage();
-              },
-            ),
-            GoRoute(
               path: 'view-quiz',
               builder: (context, state) {
                 Quiz quiz = Quiz.fromJson(jsonDecode(state.extra.toString()));
@@ -89,6 +102,36 @@ class AppRouter {
             return const StudentMainPage();
           },
           routes: [
+            GoRoute(
+              path: 'lessons',
+              builder: (context, state) {
+                return const LessonsPage();
+              },
+            ),
+            GoRoute(
+              path: 'lessons/:path',
+              builder: (BuildContext context, GoRouterState state) {
+                return PdfViewer(path: state.pathParameters['path']!);
+              },
+            ),
+            GoRoute(
+              path: 'developer',
+              builder: (context, state) {
+                return const DeveloperPage();
+              },
+            ),
+            GoRoute(
+              path: 'feedback',
+              builder: (context, state) {
+                return const FeedBackPage();
+              },
+            ),
+            GoRoute(
+              path: 'quiz',
+              builder: (context, state) {
+                return StudentQuizPage();
+              },
+            ),
             GoRoute(
               path: 'view-quiz',
               builder: (context, state) {
@@ -114,12 +157,6 @@ class AppRouter {
               },
             ),
           ]),
-      GoRoute(
-        path: '/signup',
-        builder: (context, state) {
-          return const SignUpPage();
-        },
-      ),
     ],
     // redirect: (BuildContext context, GoRouterState state) {
     //   final authBloc = context.read<AuthBloc>();

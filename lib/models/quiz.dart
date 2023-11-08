@@ -1,7 +1,7 @@
 import 'package:mobile_reviewer/models/questions.dart';
 
 class Quiz {
-  final String id;
+  String id;
   final String userID;
   final String image;
   final String title;
@@ -21,19 +21,6 @@ class Quiz {
     required this.questions,
   });
 
-  factory Quiz.fromJson(Map<String, dynamic> json) {
-    return Quiz(
-      id: json['id'] ?? '',
-      userID: json['userID'] ?? '',
-      image: json['image'] ?? '',
-      title: json['title'] ?? '',
-      description: json['description'] ?? '',
-      category: json['category'] ?? '',
-      createdAt: DateTime.parse(json['createdAt'] ?? ''),
-      questions: json['questions'] ?? [],
-    );
-  }
-
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -43,7 +30,22 @@ class Quiz {
       'description': description,
       'category': category,
       'createdAt': createdAt.toIso8601String(),
-      'questions': questions,
+      'questions': questions.map((question) => question.toJson()).toList(),
     };
+  }
+
+  factory Quiz.fromJson(Map<String, dynamic> json) {
+    return Quiz(
+      id: json['id'],
+      userID: json['userID'],
+      image: json['image'],
+      title: json['title'],
+      description: json['description'],
+      category: json['category'],
+      createdAt: DateTime.parse(json['createdAt']),
+      questions: (json['questions'] as List<dynamic>)
+          .map((questionJson) => Questions.fromJson(questionJson))
+          .toList(),
+    );
   }
 }

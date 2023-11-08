@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:mobile_reviewer/styles/pallete.dart';
-import 'package:mobile_reviewer/views/teacher/category/category.dart';
 
 import 'package:mobile_reviewer/views/teacher/home/home.dart';
 import 'package:mobile_reviewer/views/profile/profile.dart';
+import 'package:mobile_reviewer/views/teacher/scores/scores.dart';
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
@@ -21,12 +21,12 @@ class _MainNavigationState extends State<MainNavigation> {
 
   static const List<String> _titles = [
     "Home",
-    "Category",
+    "Scoreboard",
     "Profile",
   ];
   static const List<Widget> _pages = <Widget>[
     HomePage(),
-    CategoriesPage(),
+    ScoreboardPage(),
     ProfilePage(),
   ];
 
@@ -61,23 +61,6 @@ class _MainNavigationState extends State<MainNavigation> {
           style: const TextStyle(
               fontWeight: FontWeight.w400, fontSize: 16, color: Colors.white),
         ),
-        actions: _selectedIndex == 1
-            ? [
-                InkWell(
-                  onTap: () {
-                    context.push('/home/create-category');
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Icon(
-                      Icons.add, // Replace with the desired icon
-                      color: Colors.white, // Customize the icon color as needed
-                      size: 24, // Customize the icon size as needed
-                    ),
-                  ),
-                )
-              ]
-            : null,
         backgroundColor: PrimaryColor,
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -99,11 +82,11 @@ class _MainNavigationState extends State<MainNavigation> {
           ),
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.category,
+              Icons.score_rounded,
               size: 24.0,
               semanticLabel: 'Text to weight Category',
             ),
-            label: 'Category',
+            label: 'Scoreboard',
           ),
           BottomNavigationBarItem(
             icon: Icon(

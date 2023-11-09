@@ -46,36 +46,18 @@ class _AllQuizPageState extends State<AllQuizPage> {
               ),
             );
           } else {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Your Quizzies",
-                  style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14,
-                      color: Colors.grey[600]),
-                ),
-                const SizedBox(
-                  height: 20.0,
-                ),
-                ListView.builder(
-                  itemCount: count,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    Quiz quiz = snapshot.data![index];
-                    return QuizCard(
-                      quiz: quiz,
-                      onTap: () {
-                        String encoded = jsonEncode(quiz);
-                        context.push('/home/view-quiz',
-                            extra: json.encode(quiz));
-                      },
-                    );
+            return ListView.builder(
+              itemCount: count,
+              itemBuilder: (context, index) {
+                Quiz quiz = snapshot.data![index];
+                return QuizCard(
+                  quiz: quiz,
+                  onTap: () {
+                    String encoded = jsonEncode(quiz);
+                    context.push('/home/view-quiz', extra: json.encode(quiz));
                   },
-                ),
-              ],
+                );
+              },
             );
           }
         } else {

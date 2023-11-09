@@ -26,57 +26,59 @@ class LessonsPage extends StatelessWidget {
             fit: BoxFit.fitHeight,
           ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Image.asset(
-              "assets/images/logo.png",
-              width: 90,
-              height: 90,
-            ),
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Align(
-                alignment: Alignment.center,
-                child: Text(
-                  "Modules",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24,
-                      color: Colors.white),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Image.asset(
+                "assets/images/logo.png",
+                width: 90,
+                height: 90,
+              ),
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    "Modules",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24,
+                        color: Colors.white),
+                  ),
                 ),
               ),
-            ),
-            GridView.count(
-              crossAxisCount: 2,
-              shrinkWrap: true,
-              children: <Widget>[
-                LessonGridItem(
-                  title: 'Social Welfare',
-                  onTap: () {
-                    context.push("/student/lessons/${"social_welfare.pdf"}");
-                  },
-                ),
-                LessonGridItem(
-                  title: 'Social Services',
-                  onTap: () {
-                    context.push("/student/lessons/${"social_service.pdf"}");
-                  },
-                ),
-                LessonGridItem(
-                  title: 'Social Work',
-                  onTap: () {
-                    context.push("/student/lessons/${"social_work.pdf"}");
-                  },
-                ),
-                LessonGridItem(
-                    title: "Owwa",
+              GridView.count(
+                crossAxisCount: 2,
+                shrinkWrap: true,
+                children: <Widget>[
+                  LessonGridItem(
+                    title: 'Social Welfare',
                     onTap: () {
-                      context.push("/student/lessons/${"owwa.pdf"}");
-                    })
-              ],
-            ),
-          ],
+                      context.push("/student/lessons/${"social_welfare.pdf"}");
+                    },
+                  ),
+                  LessonGridItem(
+                    title: 'Social Services',
+                    onTap: () {
+                      context.push("/student/lessons/${"social_service.pdf"}");
+                    },
+                  ),
+                  LessonGridItem(
+                    title: 'Social Work',
+                    onTap: () {
+                      context.push("/student/lessons/${"social_work.pdf"}");
+                    },
+                  ),
+                  LessonGridItem(
+                      title: "Owwa",
+                      onTap: () {
+                        context.push("/student/lessons/${"owwa.pdf"}");
+                      })
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

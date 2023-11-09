@@ -13,3 +13,10 @@ class AddResponseEvent extends ResponsesEvent {
   @override
   List<Object> get props => [response];
 }
+
+class GetScoreByStudentID extends ResponsesEvent {
+  final String uid;
+  const GetScoreByStudentID(this.uid);
+  @override
+  List<Object> get props => [uid];
+}

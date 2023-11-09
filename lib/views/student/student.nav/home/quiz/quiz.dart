@@ -53,8 +53,6 @@ class StudentQuizPage extends StatelessWidget {
             } else {
               return ListView.builder(
                 itemCount: count,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
                   Quiz quiz = snapshot.data![index];
                   return QuizCard(

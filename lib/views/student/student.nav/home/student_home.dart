@@ -1,14 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:mobile_reviewer/models/quiz.dart';
-import 'package:mobile_reviewer/repositories/quiz_repository.dart';
-import 'package:mobile_reviewer/styles/pallete.dart';
 
-import 'package:mobile_reviewer/views/teacher/home/quiz/all_quiz.dart';
-import 'package:mobile_reviewer/widgets/quiz_card.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../styles/pallete.dart';
 
 class StudentHomePage extends StatelessWidget {
   const StudentHomePage({super.key});

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mobile_reviewer/blocs/reponses/responses_bloc.dart';
 import 'package:mobile_reviewer/models/Responses.dart';
 
 class QuizResponseRepository {
@@ -25,5 +26,17 @@ class QuizResponseRepository {
     });
   }
 
+  Stream<List<QuizResponse>> getScoreByStudentID(String uid) {
+    return _firestore
+        .collection(collectionName)
+        .where("studentID", isEqualTo: uid)
+        .orderBy("createdAt", descending: true)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return QuizResponse.fromJson(doc.data());
+      }).toList();
+    });
+  }
   // Implement other CRUD methods as needed (e.g., updateQuizResponse, deleteQuizResponse).
 }

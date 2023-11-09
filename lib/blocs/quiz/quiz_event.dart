@@ -33,3 +33,11 @@ class UploadQuizBackground extends QuizEvent {
   @override
   List<Object?> get props => [file, userID, title, description, category];
 }
+
+class GetQuizByID extends QuizEvent {
+  final String quizID;
+
+  const GetQuizByID(this.quizID);
+  @override
+  List<Object?> get props => [quizID];
+}

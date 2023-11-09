@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:mobile_reviewer/blocs/quiz/quiz_bloc.dart';
 import 'package:mobile_reviewer/models/questions.dart';
 import 'package:mobile_reviewer/models/quiz.dart';
 
@@ -64,5 +65,25 @@ class QuizRepository {
 
   List<Quiz> getQuiz() {
     return _quizList;
+  }
+
+  Future<Quiz?> getQuizByID(String quizID) async {
+    try {
+      DocumentSnapshot<Map<String, dynamic>> snapshot =
+          await _firestore.collection('quiz').doc(quizID).get();
+
+      if (snapshot.exists) {
+        return Quiz.fromJson(snapshot.data() ?? {});
+      } else {
+        print('Quiz with ID $quizID does not exist.');
+        // You might want to throw an exception here or handle it accordingly
+        return null;
+      }
+    } catch (e) {
+      // Handle the exception
+      print('Error fetching quiz: $e');
+      // You might want to throw an exception here or handle it accordingly
+      return null;
+    }
   }
 }

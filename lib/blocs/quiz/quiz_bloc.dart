@@ -18,6 +18,7 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
     on<CreateQuiz>(_onCreateQuiz);
     on<UploadQuizBackground>(_onUploadBackground);
     on<CreateQuestion>(_onCreateQuestion);
+    on<GetQuizByID>(_onGetQuizByID);
   }
 
   Future<void> _onCreateQuiz(CreateQuiz event, Emitter<QuizState> emit) async {
@@ -72,4 +73,7 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
       emit(QuizInitial());
     }
   }
+
+  Future<void> _onGetQuizByID(
+      GetQuizByID event, Emitter<QuizState> emit) async {}
 }

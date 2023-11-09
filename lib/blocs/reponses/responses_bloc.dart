@@ -30,4 +30,18 @@ class ResponsesBloc extends Bloc<ResponsesEvent, ResponsesState> {
       emit(ResponsesInitial());
     }
   }
+
+  // Future<void> _onGetScoreByStudentID(
+  //     GetScoreByStudentID event, Emitter<ResponsesState> emit) async {
+  //   try {
+  //     emit(QuizResponseLoadingState());
+  //     List<QuizResponse> result = await _quizResponseRepository.getScoreByStudentID(event.uid);
+  //     await Future.delayed(const Duration(seconds: 1));
+  //     emit(QuizResponseSuccessState<List<QuizResponse>>(result));
+  //   } catch (e) {
+  //     emit(QuizResponseErrorState(e.toString()));
+  //   } finally {
+  //     emit(ResponsesInitial());
+  //   }
+  // }
 }

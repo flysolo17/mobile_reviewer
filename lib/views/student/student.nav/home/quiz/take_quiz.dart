@@ -10,10 +10,14 @@ import 'package:mobile_reviewer/models/quiz.dart';
 
 import 'package:mobile_reviewer/repositories/responses_repository.dart';
 import 'package:mobile_reviewer/utils/constants.dart';
+import 'package:mobile_reviewer/widgets/button_1.dart';
 
 import 'package:mobile_reviewer/widgets/button_primary.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../../../../blocs/reponses/responses_bloc.dart';
+import '../../../../../models/Responses.dart';
+import '../../../../../repositories/auth_repository.dart';
 
 List<Answer> _answerSheet = [];
 
@@ -140,22 +144,19 @@ class _TakeQuizPageState extends State<TakeQuizPage> {
                   child: TabQuestions(
                     questions: widget.quiz.questions,
                     onSubmit: () {
-                      // QuizResponse response = QuizResponse(
-                      //     id: const Uuid().v4(),
-                      //     quizID: widget.quiz.id,
-                      //     studentID:
-                      //         context.read<AuthRepository>().currentUser?.uid ??
-                      //             "",
-                      //     answers: _answerSheet,
-                      //     createdAt: DateTime.now());
-                      // context
-                      //     .read<ResponsesBloc>()
-                      //     .add(AddResponseEvent(response));
-
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(calculateTotalScore(
-                                  widget.quiz.questions, _answerSheet)
-                              .toString())));
+                      QuizResponse response = QuizResponse(
+                          id: const Uuid().v4(),
+                          quizID: widget.quiz.id,
+                          studentID:
+                              context.read<AuthRepository>().currentUser?.uid ??
+                                  "",
+                          answers: _answerSheet,
+                          createdAt: DateTime.now(),
+                          score: calculateTotalScore(
+                              widget.quiz.questions, _answerSheet));
+                      context
+                          .read<ResponsesBloc>()
+                          .add(AddResponseEvent(response));
                     },
                   ),
                 ),
@@ -259,10 +260,35 @@ class _TabQuestionsState extends State<TabQuestions>
                 ScaffoldMessenger.of(context)
                     .showSnackBar(SnackBar(content: Text(state.message)));
               }
-              if (state is QuizResponseSuccessState) {
-                // context.push('/student/result',extra: {
-                //   'quiz' : jsonEncode(widget.q)
-                // })
+              if (state is QuizResponseSuccessState<QuizResponse>) {
+                showModalBottomSheet(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return Container(
+                      height: 200,
+                      padding: const EdgeInsets.all(15.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            "Your Score is ${calculateTotalScore(widget.questions, _answerSheet)} out of ${getTotalPoints(widget.questions)}!",
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontSize: 24),
+                          ),
+                          const SizedBox(height: 20),
+                          ButtonPrimary(
+                            onTap: () {
+                              context.pop();
+                              context.pop();
+                              context.pop();
+                            },
+                            title: "Close",
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
               }
             },
             builder: (context, state) {
@@ -297,25 +323,31 @@ class QuestionInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            questions.question,
-            style: const TextStyle(
-                fontWeight: FontWeight.w500, color: Colors.black, fontSize: 20),
-          ),
-          Text(
-            questions.description,
-            style: const TextStyle(
-                fontWeight: FontWeight.w500, color: Colors.grey, fontSize: 14),
-          ),
-          ButtonGroup(
-            choices: questions.choices,
-            questions: questions,
-          )
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              questions.question,
+              style: const TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black,
+                  fontSize: 20),
+            ),
+            Text(
+              questions.description,
+              style: const TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey,
+                  fontSize: 14),
+            ),
+            ButtonGroup(
+              choices: questions.choices,
+              questions: questions,
+            )
+          ],
+        ),
       ),
     );
   }

@@ -19,6 +19,8 @@ import 'package:mobile_reviewer/views/student/student.nav/home/modules/pdf_viewe
 import 'package:mobile_reviewer/views/student/student.nav/home/quiz/result.dart';
 import 'package:mobile_reviewer/views/student/student.nav/home/quiz/student_view_quiz.dart';
 import 'package:mobile_reviewer/views/student/student.nav/home/quiz/take_quiz.dart';
+import 'package:mobile_reviewer/views/student/student.nav/scores/view_score.dart';
+import 'package:mobile_reviewer/views/teacher/feedback/feedback.dart';
 
 import 'package:mobile_reviewer/views/teacher/home/quiz/create_question.dart';
 import 'package:mobile_reviewer/views/teacher/home/quiz/create_quiz.dart';
@@ -75,6 +77,18 @@ class AppRouter {
             return const MainNavigation();
           },
           routes: [
+            GoRoute(
+              path: 'feedback',
+              builder: (context, state) {
+                Map<String, dynamic> extraData =
+                    state.extra as Map<String, dynamic>;
+                Quiz quiz =
+                    Quiz.fromJson(jsonDecode(extraData['quiz'].toString()));
+                QuizResponse response = QuizResponse.fromJson(
+                    jsonDecode(extraData['response'].toString()));
+                return TeacherFeedBackPage(quiz: quiz, response: response);
+              },
+            ),
             GoRoute(
               path: 'create-quiz',
               builder: (context, state) {
@@ -144,6 +158,18 @@ class AppRouter {
               builder: (context, state) {
                 Quiz quiz = Quiz.fromJson(jsonDecode(state.extra.toString()));
                 return TakeQuizContainer(quiz: quiz);
+              },
+            ),
+            GoRoute(
+              path: 'view-score',
+              builder: (context, state) {
+                Map<String, dynamic> extraData =
+                    state.extra as Map<String, dynamic>;
+                Quiz quiz =
+                    Quiz.fromJson(jsonDecode(extraData['quiz'].toString()));
+                QuizResponse response = QuizResponse.fromJson(
+                    jsonDecode(extraData['response'].toString()));
+                return ViewScorePage(quiz: quiz, response: response);
               },
             ),
             GoRoute(

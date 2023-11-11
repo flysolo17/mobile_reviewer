@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mobile_reviewer/models/Responses.dart';
 import 'package:mobile_reviewer/repositories/auth_repository.dart';
 import 'package:mobile_reviewer/repositories/quiz_repository.dart';
@@ -75,12 +78,31 @@ class ResponsesList extends StatelessWidget {
           );
         } else {
           Quiz? quiz = snapshot.data;
-          return Card(
-            child: ListTile(
-              dense: true,
-              title: Text(quiz?.title ?? "--no-quiz--"),
-              subtitle: Text(
-                  "score : ${response.score} / ${getTotalPoints(quiz?.questions ?? [])}"),
+          return GestureDetector(
+            onTap: () {
+              context.push('/student/view-score', extra: {
+                'quiz': jsonEncode(quiz!.toJson()),
+                'response': jsonEncode(response.toJson()),
+              });
+            },
+            child: Card(
+              child: ListTile(
+                dense: true,
+                title: Text(
+                  quiz?.title ?? "--no-quiz--",
+                  style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text(
+                  "score : ${response.score} / ${getTotalPoints(quiz?.questions ?? [])}",
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
             ),
           );
         }

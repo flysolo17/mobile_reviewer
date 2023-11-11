@@ -31,6 +31,19 @@ class QuizRepository {
     });
   }
 
+  Stream<List<Quiz>> getQuizByTeacherID(String teacherID) {
+    return _firestore
+        .collection('quiz')
+        .where("userID", isEqualTo: teacherID)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((QuerySnapshot<Map<String, dynamic>> snapshot) {
+      return snapshot.docs.map((DocumentSnapshot<Map<String, dynamic>> doc) {
+        return Quiz.fromJson(doc.data() ?? {});
+      }).toList();
+    });
+  }
+
   Future<void> addQuiz(Quiz quiz) async {
     quiz.id = collectionReference.doc().id;
     await collectionReference.doc(quiz.id).set(quiz.toJson());
@@ -71,7 +84,6 @@ class QuizRepository {
     try {
       DocumentSnapshot<Map<String, dynamic>> snapshot =
           await _firestore.collection('quiz').doc(quizID).get();
-
       if (snapshot.exists) {
         return Quiz.fromJson(snapshot.data() ?? {});
       } else {
@@ -85,5 +97,9 @@ class QuizRepository {
       // You might want to throw an exception here or handle it accordingly
       return null;
     }
+  }
+
+  Future<void> deleteQuiz(String quizID) {
+    return _firestore.collection('quiz').doc(quizID).delete();
   }
 }

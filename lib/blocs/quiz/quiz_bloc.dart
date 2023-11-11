@@ -19,6 +19,7 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
     on<UploadQuizBackground>(_onUploadBackground);
     on<CreateQuestion>(_onCreateQuestion);
     on<GetQuizByID>(_onGetQuizByID);
+    on<DeleteQuiz>(_onDeleteQuiz);
   }
 
   Future<void> _onCreateQuiz(CreateQuiz event, Emitter<QuizState> emit) async {
@@ -76,4 +77,17 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
 
   Future<void> _onGetQuizByID(
       GetQuizByID event, Emitter<QuizState> emit) async {}
+
+  Future<void> _onDeleteQuiz(DeleteQuiz event, Emitter<QuizState> emit) async {
+    try {
+      emit(QuizLoadingState());
+      await _quizRepository.deleteQuiz(
+        event.quizID,
+      );
+      await Future.delayed(const Duration(seconds: 1));
+      emit(const QuizSuccessState<String>("Quiz Successfully Deleted!"));
+    } catch (e) {
+      emit(QuizErrorState(e.toString()));
+    }
+  }
 }

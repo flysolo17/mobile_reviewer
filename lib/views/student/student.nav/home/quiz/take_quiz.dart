@@ -147,6 +147,7 @@ class _TakeQuizPageState extends State<TakeQuizPage> {
                       QuizResponse response = QuizResponse(
                           id: const Uuid().v4(),
                           quizID: widget.quiz.id,
+                          teacherID: widget.quiz.userID,
                           studentID:
                               context.read<AuthRepository>().currentUser?.uid ??
                                   "",

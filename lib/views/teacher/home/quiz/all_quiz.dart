@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_reviewer/models/quiz.dart';
+import 'package:mobile_reviewer/repositories/auth_repository.dart';
 import 'package:mobile_reviewer/repositories/quiz_repository.dart';
 import 'package:mobile_reviewer/widgets/quiz_card.dart';
 
@@ -17,7 +18,8 @@ class _AllQuizPageState extends State<AllQuizPage> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<Quiz>>(
-      stream: context.read<QuizRepository>().getAllQuiz(),
+      stream: context.read<QuizRepository>().getQuizByTeacherID(
+          context.read<AuthRepository>().currentUser?.uid ?? ""),
       builder: (BuildContext context, AsyncSnapshot<List<Quiz>> snapshot) {
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');

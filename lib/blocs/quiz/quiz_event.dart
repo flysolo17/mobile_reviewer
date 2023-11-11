@@ -41,3 +41,11 @@ class GetQuizByID extends QuizEvent {
   @override
   List<Object?> get props => [quizID];
 }
+
+class DeleteQuiz extends QuizEvent {
+  final String quizID;
+
+  const DeleteQuiz(this.quizID);
+  @override
+  List<Object?> get props => [quizID];
+}

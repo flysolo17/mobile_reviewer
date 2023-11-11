@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:mobile_reviewer/models/Responses.dart';
+import 'package:mobile_reviewer/models/feedback.dart';
 import 'package:mobile_reviewer/repositories/responses_repository.dart';
 
 part 'responses_event.dart';
@@ -15,6 +16,7 @@ class ResponsesBloc extends Bloc<ResponsesEvent, ResponsesState> {
         super(ResponsesInitial()) {
     on<ResponsesEvent>((event, emit) {});
     on<AddResponseEvent>(_onAddResponseEvent);
+    on<AddFeedBack>(_onAddFeedBack);
   }
 
   Future<void> _onAddResponseEvent(
@@ -44,4 +46,17 @@ class ResponsesBloc extends Bloc<ResponsesEvent, ResponsesState> {
   //     emit(ResponsesInitial());
   //   }
   // }
+
+  Future<void> _onAddFeedBack(
+      AddFeedBack event, Emitter<ResponsesState> emit) async {
+    try {
+      emit(QuizResponseLoadingState());
+      await _quizResponseRepository.addFeedback(
+          event.responseID, event.feedback);
+      await Future.delayed(const Duration(seconds: 1));
+      emit(const QuizResponseSuccessState<String>("Sent successful"));
+    } catch (e) {
+      emit(QuizResponseErrorState(e.toString()));
+    }
+  }
 }

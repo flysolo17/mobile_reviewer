@@ -20,3 +20,11 @@ class GetScoreByStudentID extends ResponsesEvent {
   @override
   List<Object> get props => [uid];
 }
+
+class AddFeedBack extends ResponsesEvent {
+  final String responseID;
+  final TeacherFeedBack feedback;
+  const AddFeedBack(this.responseID, this.feedback);
+  @override
+  List<Object> get props => [responseID, feedback];
+}

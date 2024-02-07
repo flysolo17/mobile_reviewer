@@ -41,7 +41,7 @@ dependencies:
   uuid: ^4.1.0
   flutter_svg: ^2.0.7
   collection: ^1.17.2
-  syncfusion_flutter_pdfviewer: ^23.1.44
+  syncfusion_flutter_pdfviewer: ^23.2.5
   flutter_rating_bar: ^4.0.1
 
 dev_dependencies:

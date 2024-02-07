@@ -28,12 +28,15 @@ class LessonsPage extends StatelessWidget {
         ),
         child: SingleChildScrollView(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Image.asset(
-                "assets/images/logo.png",
-                width: 90,
-                height: 90,
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Image.asset(
+                  "assets/images/logo.png",
+                  width: 100,
+                  height: 100,
+                ),
               ),
               const Padding(
                 padding: EdgeInsets.all(8.0),
@@ -51,29 +54,40 @@ class LessonsPage extends StatelessWidget {
               GridView.count(
                 crossAxisCount: 2,
                 shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 children: <Widget>[
                   LessonGridItem(
+                    image: 'assets/images/book1.png',
                     title: 'Social Welfare',
                     onTap: () {
                       context.push("/student/lessons/${"social_welfare.pdf"}");
                     },
                   ),
                   LessonGridItem(
+                    image: 'assets/images/book2.png',
                     title: 'Social Services',
                     onTap: () {
                       context.push("/student/lessons/${"social_service.pdf"}");
                     },
                   ),
                   LessonGridItem(
+                    image: 'assets/images/book3.png',
                     title: 'Social Work',
                     onTap: () {
                       context.push("/student/lessons/${"social_work.pdf"}");
                     },
                   ),
                   LessonGridItem(
+                      image: 'assets/images/book4.png',
                       title: "Owwa",
                       onTap: () {
                         context.push("/student/lessons/${"owwa.pdf"}");
+                      }),
+                  LessonGridItem(
+                      image: 'assets/images/book5.png',
+                      title: "Test",
+                      onTap: () {
+                        context.push("/student/lessons/${"test.pdf"}");
                       })
                 ],
               ),
@@ -86,37 +100,38 @@ class LessonsPage extends StatelessWidget {
 }
 
 class LessonGridItem extends StatelessWidget {
+  final String image;
   final String title;
   final VoidCallback onTap;
-  const LessonGridItem({super.key, required this.title, required this.onTap});
+  const LessonGridItem(
+      {super.key,
+      required this.image,
+      required this.title,
+      required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/folder.png'),
-            fit: BoxFit.cover,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            image,
+            height: 120,
           ),
-        ),
-        padding: const EdgeInsets.all(10),
-        margin: const EdgeInsets.all(10),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Align(
-            alignment: Alignment.bottomCenter,
+          Padding(
+            padding: const EdgeInsets.all(8.0),
             child: Text(
               title,
               textAlign: TextAlign.center,
               style: const TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: Colors.black),
+                  fontSize: 14,
+                  color: Colors.white),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

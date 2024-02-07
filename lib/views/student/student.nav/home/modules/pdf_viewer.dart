@@ -15,8 +15,10 @@ class PdfViewer extends StatelessWidget {
         backgroundColor: PrimaryColor,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: SfPdfViewer.asset(
-        "assets/files/$path",
+      body: SafeArea(
+        child: SfPdfViewer.asset(
+          "assets/files/$path",
+        ),
       ),
     );
   }

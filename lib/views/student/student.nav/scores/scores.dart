@@ -78,6 +78,20 @@ class ResponsesList extends StatelessWidget {
           );
         } else {
           Quiz? quiz = snapshot.data;
+          bool isScoreHighEnough(double score) {
+            double totalPossible = snapshot.data!.questions.fold(
+              0.0, // Initial value
+              (double sum, dynamic question) => sum + question.points,
+            );
+            if (totalPossible <= 0) {
+              throw ArgumentError(
+                  "Score and total possible score must be valid numbers.");
+            }
+
+            final percentage = score / totalPossible * 100;
+            return percentage >= 75;
+          }
+
           return GestureDetector(
             onTap: () {
               context.push('/student/view-score', extra: {
@@ -86,22 +100,44 @@ class ResponsesList extends StatelessWidget {
               });
             },
             child: Card(
-              child: ListTile(
-                dense: true,
-                title: Text(
-                  quiz?.title ?? "--no-quiz--",
-                  style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
-                ),
-                subtitle: Text(
-                  "score : ${response.score} / ${getTotalPoints(quiz?.questions ?? [])}",
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 14,
+              elevation: 5.0,
+              color: Colors.white,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ListTile(
+                    dense: true,
+                    title: Text(
+                      quiz?.title ?? "--no-quiz--",
+                      style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                      "score : ${response.score} / ${getTotalPoints(quiz?.questions ?? [])}",
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                      ),
+                    ),
                   ),
-                ),
+                  Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                          color: isScoreHighEnough(response.score.toDouble())
+                              ? Colors.green
+                              : Colors.red),
+                      child: Text(
+                        isScoreHighEnough(response.score.toDouble())
+                            ? "You did great!"
+                            : "Better luck next time.",
+                        style:
+                            const TextStyle(fontSize: 14, color: Colors.white),
+                      ))
+                ],
               ),
             ),
           );

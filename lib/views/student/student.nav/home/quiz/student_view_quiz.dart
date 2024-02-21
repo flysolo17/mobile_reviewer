@@ -41,7 +41,7 @@ class StudentViewQuizPage extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30.0),
                     child: SvgPicture.asset(
-                      'assets/svgs/play.svg',
+                      'assets/svgs/quiz.svg',
                       height: 200,
                     ),
                   ),

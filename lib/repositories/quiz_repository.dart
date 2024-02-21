@@ -99,7 +99,25 @@ class QuizRepository {
     }
   }
 
-  Future<void> deleteQuiz(String quizID) {
-    return _firestore.collection('quiz').doc(quizID).delete();
+  // Future<void> deleteQuiz(String quizID) {
+  //   _firestore.collection('quiz_responses').where('quizID',isEqualTo: quizID).delete()
+  //   return _firestore.collection('quiz').doc(quizID).delete();
+  // }
+
+  Future<void> deleteQuiz(String quizID) async {
+    try {
+      final writeBatch = FirebaseFirestore.instance.batch();
+      final responses = await _firestore
+          .collection('quiz_responses')
+          .where('quizID', isEqualTo: quizID)
+          .get();
+      for (final response in responses.docs) {
+        writeBatch.delete(response.reference);
+      }
+      writeBatch.delete(_firestore.collection('quiz').doc(quizID));
+      await writeBatch.commit();
+    } on FirebaseException catch (error) {
+      print('Error deleting quiz: $error');
+    }
   }
 }

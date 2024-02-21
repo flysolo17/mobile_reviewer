@@ -16,9 +16,8 @@ class PdfViewer extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: SafeArea(
-        child: SfPdfViewer.asset(
-          "assets/files/$path",
-        ),
+        child: SfPdfViewer.asset("assets/files/$path",
+            scrollDirection: PdfScrollDirection.horizontal),
       ),
     );
   }

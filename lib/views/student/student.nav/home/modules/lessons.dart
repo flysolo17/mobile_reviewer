@@ -30,12 +30,15 @@ class LessonsPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Image.asset(
-                  "assets/images/logo.png",
-                  width: 100,
-                  height: 100,
+              Align(
+                alignment: Alignment.topLeft,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Image.asset(
+                    "assets/images/logo.png",
+                    width: 80,
+                    height: 80,
+                  ),
                 ),
               ),
               const Padding(
@@ -118,7 +121,7 @@ class LessonGridItem extends StatelessWidget {
         children: [
           Image.asset(
             image,
-            height: 120,
+            height: 130,
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),

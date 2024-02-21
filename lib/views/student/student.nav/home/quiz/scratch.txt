@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -197,35 +195,8 @@ class _TabQuestionsState extends State<TabQuestions>
     return uniqueCategories.toList();
   }
 
-  List<int> _answerList = [];
-  int indexOfQuestionID(List<Answer> answerList, String questionID) {
-    for (int i = 0; i < answerList.length; i++) {
-      if (answerList[i].questionID == questionID) {
-        return i; // Return the index when a match is found
-      }
-    }
-    return -1;
-  }
-
-  void addAnswer(String questionID, String ans) {
-    int result = indexOfQuestionID(_answerSheet, questionID);
-    print(result);
-    if (result == -1) {
-      _answerSheet.add(Answer(questionID: questionID, answer: ans));
-    } else {
-      _answerSheet[result].answer = ans;
-    }
-  }
-
-  void handleButtonTap(int index) {
-    setState(() {
-      _answerList[index] = index;
-    });
-  }
-
   @override
   void initState() {
-    _answerList = List.generate(widget.questions.length, (index) => -1);
     _tabController =
         TabController(length: widget.questions.length, vsync: this);
     _tabController.addListener(() {
@@ -244,30 +215,6 @@ class _TabQuestionsState extends State<TabQuestions>
 
   void debugLayout() {
     debugDumpRenderTree();
-  }
-
-  String displayText(int score, List<Questions> questions) {
-    int maxScore = getTotalPoints(questions);
-    double percentage = (score / maxScore) * 100;
-
-    if (percentage < 75) {
-      return "You failed the exam... Do you want to try it again?";
-    } else if (percentage >= 75 && percentage <= 80) {
-      return "Good! You passed the exam. Do you want to strive for more?";
-    } else if (percentage > 80 && percentage <= 90) {
-      return "Very good! You passed the exam. Do you want to excel more?";
-    } else {
-      return "Excellent! There's nothing to improve.";
-    }
-  }
-
-  bool isBelow90Percent(int score, List<Questions> questions) {
-    int maxScore = getTotalPoints(questions);
-    double percentage = (score / maxScore) * 100;
-    if (percentage >= 90) {
-      return true;
-    }
-    return false;
   }
 
   @override
@@ -303,18 +250,8 @@ class _TabQuestionsState extends State<TabQuestions>
           Expanded(
             child: TabBarView(
               controller: _tabController,
-              children: widget.questions.mapIndexed((index, question) {
-                return QuestionInfo(
-                  questions: question,
-                  onTap: (int selected) {
-                    setState(() {
-                      _answerList[index] = selected;
-                      addAnswer(question.id, question.choices[selected]);
-                      print(_answerSheet);
-                    });
-                  },
-                  selectedAnswer: _answerList[index],
-                );
+              children: widget.questions.map((question) {
+                return QuestionInfo(questions: question, onTap: () {});
               }).toList(),
             ),
           ),
@@ -330,7 +267,7 @@ class _TabQuestionsState extends State<TabQuestions>
                     context: context,
                     builder: (BuildContext context) {
                       return Container(
-                        height: 600,
+                        height: 200,
                         padding: const EdgeInsets.all(15.0),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -338,38 +275,8 @@ class _TabQuestionsState extends State<TabQuestions>
                             Text(
                               "Your Score is ${calculateTotalScore(widget.questions, _answerSheet)} out of ${getTotalPoints(widget.questions)}!",
                               textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                  fontSize: 24, fontWeight: FontWeight.bold),
+                              style: const TextStyle(fontSize: 24),
                             ),
-                            const SizedBox(height: 20),
-                            Text(
-                              displayText(
-                                  calculateTotalScore(
-                                      widget.questions, _answerSheet),
-                                  widget.questions),
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 20),
-                            if (isBelow90Percent(
-                                    calculateTotalScore(
-                                        widget.questions, _answerSheet),
-                                    widget.questions) ==
-                                false)
-                              OutlinedButtonPrimary(
-                                onTap: () {
-                                  setState(() {
-                                    _answerSheet = [];
-                                    _selectedIndex = 0;
-                                    _answerList = List.generate(
-                                        widget.questions.length, (index) => -1);
-                                    _tabController.index = _selectedIndex;
-                                  });
-                                  context.pop();
-                                },
-                                title: "Retry",
-                              ),
                             const SizedBox(height: 20),
                             ButtonPrimary(
                               onTap: () {
@@ -409,15 +316,23 @@ class _TabQuestionsState extends State<TabQuestions>
   }
 }
 
-class QuestionInfo extends StatelessWidget {
+class QuestionInfo extends StatefulWidget {
   final Questions questions;
-  final void Function(int index) onTap;
-  final int selectedAnswer;
-  QuestionInfo(
-      {super.key,
-      required this.questions,
-      required this.onTap,
-      required this.selectedAnswer});
+  final VoidCallback onTap;
+  const QuestionInfo({super.key, required this.questions, required this.onTap});
+  @override
+  State<QuestionInfo> createState() => _QuestionInfoState();
+}
+
+class _QuestionInfoState extends State<QuestionInfo> {
+  List<int> _anwerIndexList = [];
+  @override
+  void initState() {
+    _anwerIndexList =
+        List.generate(widget.questions.choices.length, (index) => -1);
+    print(_anwerIndexList);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -429,49 +344,23 @@ class QuestionInfo extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              questions.question,
+              widget.questions.question,
               style: const TextStyle(
                   fontWeight: FontWeight.w500,
                   color: Colors.black,
                   fontSize: 20),
             ),
             Text(
-              questions.description,
+              widget.questions.description,
               style: const TextStyle(
                   fontWeight: FontWeight.w500,
                   color: Colors.grey,
                   fontSize: 14),
             ),
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: questions.choices.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: ElevatedButton(
-                    onPressed: () => onTap(index),
-                    style: ElevatedButton.styleFrom(
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      backgroundColor: selectedAnswer == index
-                          ? Colors.green
-                          : Colors.grey[100],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 14.0),
-                      child: Text(questions.choices[index],
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            color: selectedAnswer == index
-                                ? Colors.white
-                                : Colors.black,
-                          )),
-                    ),
-                  ),
-                );
-              },
+            ButtonGroup(
+              choices: widget.questions.choices,
+              questions: widget.questions,
+
             )
           ],
         ),
@@ -480,91 +369,86 @@ class QuestionInfo extends StatelessWidget {
   }
 }
 
-// class ButtonGroup extends StatefulWidget {
-//   final List<String> choices;
-//   final Questions questions;
+class ButtonGroup extends StatefulWidget {
+  final List<String> choices;
+  final Questions questions;
 
-//   ButtonGroup({
-//     super.key,
-//     required this.choices,
-//     required this.questions,
-//   });
+  ButtonGroup({super.key, required this.choices, required this.questions});
 
-//   @override
-//   _ButtonGroupState createState() => _ButtonGroupState();
-// }
+  @override
+  _ButtonGroupState createState() => _ButtonGroupState();
+}
 
-// class _ButtonGroupState extends State<ButtonGroup> {
-//   int selectedButtonIndex = -1;
+class _ButtonGroupState extends State<ButtonGroup> {
+  int selectedButtonIndex = -1;
 
-//   void handleButtonTap(int index) {
-//     setState(() {
-//       selectedButtonIndex = index;
-//       print(selectedButtonIndex);
-//       addAnswer(widget.questions.id, widget.choices[index]);
-//     });
-//   }
+  void handleButtonTap(int index) {
+    setState(() {
+      selectedButtonIndex = index;
+      addAnswer(widget.questions.id, widget.choices[index]);
+    });
+  }
 
-//   int indexOfQuestionID(List<Answer> answerList, String questionID) {
-//     for (int i = 0; i < answerList.length; i++) {
-//       if (answerList[i].questionID == questionID) {
-//         return i;
-//       }
-//     }
-//     return -1;
-//   }
+  int indexOfQuestionID(List<Answer> answerList, String questionID) {
+    for (int i = 0; i < answerList.length; i++) {
+      if (answerList[i].questionID == questionID) {
+        return i; // Return the index when a match is found
+      }
+    }
+    return -1;
+  }
 
-//   @override
-//   void initState() {
-//     int result = indexOfQuestionID(_answerSheet, widget.questions.id);
-//     if (result != -1) {
-//       setState(() {
-//         selectedButtonIndex = result;
-//       });
-//     }
-//     super.initState();
-//   }
+  @override
+  void initState() {
+    int result = indexOfQuestionID(_answerSheet, widget.questions.id);
+    if (result != -1) {
+      setState(() {
+        selectedButtonIndex = result;
+      });
+    }
+    super.initState();
+  }
 
-//   void addAnswer(String questionID, String ans) {
-//     int result = indexOfQuestionID(_answerSheet, questionID);
-//     if (result == -1) {
-//       _answerSheet.add(Answer(questionID: questionID, answer: ans));
-//     }
-//     _answerSheet[result].answer = ans;
-//   }
+  void addAnswer(String questionID, String ans) {
+    int result = indexOfQuestionID(_answerSheet, questionID);
+    if (result == -1) {
+      _answerSheet.add(Answer(questionID: questionID, answer: ans));
+    }
+    _answerSheet[result].answer = ans;
+  }
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return ListView.builder(
-//       shrinkWrap: true,
-//       itemCount: widget.choices.length,
-//       itemBuilder: (context, index) {
-//         return Padding(
-//           padding: const EdgeInsets.all(5.0),
-//           child: ElevatedButton(
-//             onPressed: () => handleButtonTap(index),
-//             style: ElevatedButton.styleFrom(
-//               elevation: 0,
-//               shape: RoundedRectangleBorder(
-//                 borderRadius: BorderRadius.circular(5),
-//               ),
-//               backgroundColor: selectedButtonIndex == index
-//                   ? Colors.green
-//                   : Colors.grey[100],
-//             ),
-//             child: Padding(
-//               padding: const EdgeInsets.symmetric(vertical: 14.0),
-//               child: Text(widget.choices[index],
-//                   textAlign: TextAlign.left,
-//                   style: TextStyle(
-//                     color: selectedButtonIndex == index
-//                         ? Colors.white
-//                         : Colors.black,
-//                   )),
-//             ),
-//           ),
-//         );
-//       },
-//     );
-//   }
-// }
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: widget.choices.length,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: ElevatedButton(
+            onPressed: () => handleButtonTap(index),
+            style: ElevatedButton.styleFrom(
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5),
+              ),
+              backgroundColor: selectedButtonIndex == index
+                  ? Colors.green
+                  : Colors.grey[100],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 14.0),
+              child: Text(widget.choices[index],
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    color: selectedButtonIndex == index
+                        ? Colors.white
+                        : Colors.black,
+                  )),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}

@@ -14,6 +14,12 @@ import '../../../repositories/quiz_repository.dart';
 import '../../../repositories/responses_repository.dart';
 import '../../../utils/constants.dart';
 
+class QuizUserReponse {
+  int id;
+  List<QuizResponse> responses;
+  QuizUserReponse({required this.id, required this.responses});
+}
+
 class ScoreboardPage extends StatelessWidget {
   const ScoreboardPage({super.key});
 
@@ -34,11 +40,13 @@ class ScoreboardPage extends StatelessWidget {
         }
         if (snapshot.data != null) {
           List<QuizResponse> responseList = snapshot.data ?? [];
+          List<QuizUserReponse> _dataResponses = [];
           int count = responseList.length;
           return ListView.builder(
             itemCount: count,
             itemBuilder: (context, index) {
               QuizResponse response = snapshot.data![index];
+
               return ResponsesList(response: response);
             },
           );
